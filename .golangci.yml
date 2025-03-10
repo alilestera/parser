@@ -1,0 +1,63 @@
+linters:
+  enable:
+    - asciicheck
+    - cyclop
+    - decorder
+    - dogsled
+    - durationcheck
+    - funlen
+    - goconst
+    - goprintffuncname
+    - nestif
+    - nlreturn
+    - reassign
+    - wastedassign
+    - whitespace
+
+linters-settings:
+  cyclop:
+    # The maximal code complexity to report.
+    # Default: 10
+    max-complexity: 20
+    # Should ignore tests.
+    # Default: false
+    skip-tests: true
+  dogsled:
+    # Checks assignments with too many blank identifiers.
+    # Default: 2
+    max-blank-identifiers: 3
+  funlen:
+    # Checks the number of lines in a function.
+    # If lower than 0, disable the check.
+    # Default: 60
+    lines: -1
+    # Checks the number of statements in a function.
+    # If lower than 0, disable the check.
+    # Default: 40
+    statements: 80
+    # Ignore comments when counting lines.
+    # Default false
+    ignore-comments: true
+  nlreturn:
+    # Size of the block (including return statement that is still "OK")
+    # so no return split required.
+    # Default: 1
+    block-size: 2
+  reassign:
+    # Patterns for global variable names that are checked for reassignment.
+    # See https://github.com/curioswitch/go-reassign#usage
+    # Default: ["EOF", "Err.*"]
+    patterns:
+      - ".*"
+  whitespace:
+    # Enforces newlines (or comments) after every multi-line if statement.
+    # Default: false
+    multi-if: true
+    # Enforces newlines (or comments) after every multi-line function signature.
+    # Default: false
+    multi-func: true
+run:
+  timeout: 3m
+  # Include test files or not.
+  # Default: true
+  tests: false

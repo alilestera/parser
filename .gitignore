@@ -23,6 +23,8 @@ gen
 !README.md
 !LICENSE
 
+!.golangci.yml
+
 # !Makefile
 
 # ...even if they are in subdirectories
