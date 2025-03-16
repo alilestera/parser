@@ -8,7 +8,7 @@ import (
 type node struct {
 	name      string
 	fieldName string
-	kind      reflect.Kind
+	typ       reflect.Type // non-pointer type
 	value     string
 	children  []*node
 }
