@@ -1,8 +1,8 @@
 module github.com/alilestera/parser
 
-go 1.22.5
+go 1.24
 
 require (
-	github.com/BurntSushi/toml v1.4.0 // indirect
-	gopkg.in/yaml.v3 v3.0.1 // indirect
+	github.com/BurntSushi/toml v1.4.0
+	gopkg.in/yaml.v3 v3.0.1
 )
