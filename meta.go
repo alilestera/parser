@@ -19,8 +19,8 @@ func (md metadata) add(nd *node, rt reflect.Type) error {
 		rt = rt.Elem()
 	}
 
+	nd.typ = rt
 	k := rt.Kind()
-	nd.kind = k
 
 	if !isSupportedKind(k) {
 		return fmt.Errorf("unsupported type %q", rt)
@@ -36,8 +36,8 @@ func (md metadata) add(nd *node, rt reflect.Type) error {
 	case reflect.Map:
 		return md.addMap(nd, rt)
 	case reflect.Interface:
-		// Only empty interfaces are supported
 		if rt.NumMethod() > 0 {
+			// Only empty interfaces are supported, redetermine type
 			return fmt.Errorf("unsupported type %q", rt)
 		}
 
@@ -106,18 +106,18 @@ func (md metadata) addMap(nd *node, rt reflect.Type) error {
 
 func (md metadata) addAnything(nd *node) error {
 	if len(nd.children) == 0 {
-		// case unique value, treats it as type `string`
-		// but do not change the kind
+		// Case no child value, treats it as `string`
+		// But do not change the type
 		return nil
 	}
 
 	if nd.isArray() {
-		// case array value, treats it as type `[]any`
-		return md.addSliceArray(nd, zeroSliceType)
+		// Case array value, treats it as `[]any`
+		return md.add(nd, zeroSliceType)
 	}
 
-	// case map value, treats it as type `map[string]any`
-	return md.addMap(nd, zeroMapType)
+	// Case map value, treats it as `map[string]any`
+	return md.add(nd, zeroMapType)
 }
 
 func isSupportedKind(kind reflect.Kind) bool {

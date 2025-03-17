@@ -11,9 +11,9 @@ type filler struct{}
 
 func (f filler) fill(nd *node, rv reflect.Value) error {
 	rv = indirect(rv)
-	k, val := nd.kind, nd.value
+	typ, val := nd.typ, nd.value
 
-	switch k {
+	switch typ.Kind() {
 	case reflect.Interface:
 		rv.Set(reflect.ValueOf(val))
 	case reflect.String:
@@ -122,10 +122,8 @@ func (f filler) setStruct(nd *node, rv reflect.Value) error {
 }
 
 func (f filler) setMap(nd *node, rv reflect.Value) error {
-	rt := rv.Type()
-	if rv.IsNil() {
-		rv.Set(reflect.MakeMap(rt))
-	}
+	rt := nd.typ
+	rm := reflect.MakeMap(rt)
 
 	for _, child := range nd.children {
 		elem := reflect.New(rt.Elem()).Elem()
@@ -134,19 +132,26 @@ func (f filler) setMap(nd *node, rv reflect.Value) error {
 			return err
 		}
 
-		rv.SetMapIndex(reflect.ValueOf(child.name), elem)
+		rm.SetMapIndex(reflect.ValueOf(child.name), elem)
 	}
+	rv.Set(rm)
 
 	return nil
 }
 
 func (f filler) setSlice(nd *node, rv reflect.Value) error {
-	rv.Set(reflect.MakeSlice(rv.Type(), len(nd.children), len(nd.children)))
-	return f.setSliceArray(nd, rv)
+	rs := reflect.MakeSlice(nd.typ, len(nd.children), len(nd.children))
+	err := f.setSliceArray(nd, rs)
+	if err != nil {
+		return err
+	}
+	rv.Set(rs)
+
+	return nil
 }
 
 func (f filler) setSliceArray(nd *node, rv reflect.Value) error {
-	rt := rv.Type()
+	rt := nd.typ
 	for i, child := range nd.children {
 		elem := reflect.New(rt.Elem()).Elem()
 		err := f.fill(child, elem)
